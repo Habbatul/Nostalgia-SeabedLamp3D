@@ -6,16 +6,17 @@ import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-import { BloomPass } from 'three/addons/postprocessing/BloomPass.js';
 
 //render
 const canvas = document.getElementById('canvas');
 
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+var camera = new THREE.PerspectiveCamera(80, window.innerWidth/window.innerHeight, 0.1, 1000);
 var renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true});
-
+renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
+
+
 camera.position.set(0,10,-50)
 
 
@@ -42,7 +43,8 @@ controls.dampingFactor = 0.25;
 controls.enableZoom = true;
 
 controls.target.set(0,8,0);
-
+controls.minDistance = 20; 
+controls.maxDistance = 120; 
 
 //GLTF Loader
 var loader = new GLTFLoader();
@@ -70,7 +72,7 @@ scene.add(pointLight2);
 var pivot1 = new THREE.Vector3(0, 8, 0);
 var initialPosition1 = new THREE.Vector3().copy(camera.position);
 var distance1 = initialPosition1.distanceTo(pivot1);
-var InitialAngle1 = 1.5;
+var InitialAngle1 = 0;
 var tween;
 var rotate1;
 
@@ -81,8 +83,8 @@ function initialAnimation(distanceFromPivot) {
     tween = new TWEEN.Tween(camera.position)
         .to({ x: pivot1.x + distanceFromPivot * Math.cos(InitialAngle1), y: initialPosition1.y, z: pivot1.z + distanceFromPivot * Math.sin(InitialAngle1) }, 500)
         .onComplete(() => {
-            rotate1 = new TWEEN.Tween({ angle: 1.5 })
-                .to({ angle: Math.PI * 2.5 }, 4000)
+            rotate1 = new TWEEN.Tween({ angle: 0 })
+                .to({ angle: Math.PI * 2 }, 4000)
                 .onUpdate((obj) => {
                     var angle = obj.angle;
                     var newX = pivot1.x + distanceFromPivot * Math.cos(angle);
@@ -99,41 +101,78 @@ function initialAnimation(distanceFromPivot) {
 initialAnimation(distance1);
 
 
+const musicBox = document.getElementById('music-box');
+
+//Fungsi untuk memeriksa apakah elemen adalah turunan dari elemen lain
+function isDescendant(parent, child) {
+    let node = child.parentNode;
+    while (node != null) {
+      if (node === parent) {
+        return true;
+      }
+      node = node.parentNode;
+    }
+    return false;
+  }
+
+
+//Memulai Tween jika tidak sedang menahan tombol mouse
 function startTween(distance) {
     if (!isMouseDown && !isZooming) {
         initialAnimation(distance);
     }
 }
+
+//Menghentikan Tween saat menahan tombol mouse
 function stopTween() {
-    if (isMouseDown || isZooming) {
-        tween.stop();
-        if (rotate1) rotate1.stop();
-    }
+if (isMouseDown || isZooming) {
+    tween.stop();
+    if (rotate1) rotate1.stop(); // Menghentikan tween rotate jika ada
 }
+}
+
+//Event listener untuk mouse down dan mouse up
 function onMouseDown(event) {
+if (!isDescendant(musicBox, event.target)) {
     isMouseDown = true;
     stopTween();
+    }
 }
+
 function onMouseUp(event) {
+if (!isDescendant(musicBox, event.target)) {
     isMouseDown = false;
     startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1));
 }
+}
 
+//Event listener untuk mouse move, mouse down, dan mouse up
+document.addEventListener("mousedown", onMouseDown, false);
+document.addEventListener("mouseup", onMouseUp, false);
 
-document.addEventListener('mousedown', onMouseDown, false);
-document.addEventListener('mouseup', onMouseUp, false);
-document.addEventListener('touchstart', function (event) {
+//Event listener untuk touch start dan touch end
+document.addEventListener("touchstart",function (event) {
     onMouseDown(event.touches[0]);
-}, false);
-controls.addEventListener('start', function () {
+},false
+);
+
+document.addEventListener("touchend",function (event) {
+    onMouseUp(event.touches.length === 0 ? { clientX: 0, clientY: 0 } : event.touches[0]);
+},
+false
+);
+
+//Event listener untuk menghentikan animasi saat zoom dimulai
+controls.addEventListener("start", function () {
     isZooming = true;
     stopTween();
 });
-controls.addEventListener('end', function () {
+
+//Event listener untuk memulai kembali animasi setelah zoom selesai
+controls.addEventListener("end", function () {
     isZooming = false;
     startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1));
 });
-
 
 //CRT Shader
 const crtTVShader = {
@@ -180,8 +219,6 @@ const crtTVShader = {
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
 composer.addPass(renderPass);
-const bloomPass = new BloomPass(1.1,25,0.55);
-composer.addPass(bloomPass);
 const shaderPass = new ShaderPass(crtTVShader);
 shaderPass.renderToScreen = true;
 composer.addPass(shaderPass);
