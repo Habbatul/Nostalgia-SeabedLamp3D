@@ -23,7 +23,7 @@ camera.position.set(0,10,-50)
 //HDRI Loader
 new RGBELoader()
     .setDataType(THREE.FloatType)
-    .load('hdr_sky.hdr', function(hdrCubeMap){
+    .load('asset3D/hdr_sky.hdr', function(hdrCubeMap){
         hdrCubeMap.encoding = THREE.LinearEncoding;
         const paramGenerator = new THREE.PMREMGenerator(renderer);
         paramGenerator.compileEquirectangularShader();
@@ -48,7 +48,7 @@ controls.maxDistance = 120;
 
 //GLTF Loader
 var loader = new GLTFLoader();
-    loader.load('Seabedlamp.gltf', function(gltf){
+    loader.load('asset3D/Seabedlamp.gltf', function(gltf){
         const model = gltf.scene;
         model.position.set(0,0,0);
         model.scale.set(30,30,30);
