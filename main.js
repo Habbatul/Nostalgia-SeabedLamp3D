@@ -107,13 +107,13 @@ const musicBox = document.getElementById('music-box');
 function isDescendant(parent, child) {
     let node = child.parentNode;
     while (node != null) {
-      if (node === parent) {
-        return true;
-      }
-      node = node.parentNode;
+        if (node === parent) {
+            return true;
+        }
+        node = node.parentNode;
     }
     return false;
-  }
+}
 
 
 //Memulai Tween jika tidak sedang menahan tombol mouse
@@ -127,23 +127,22 @@ function startTween(distance) {
 function stopTween() {
 if (isMouseDown || isZooming) {
     tween.stop();
-    if (rotate1) rotate1.stop(); // Menghentikan tween rotate jika ada
+    if (rotate1) rotate1.stop(); //Menghentikan tween rotate jika ada
 }
 }
 
-//Event listener untuk mouse down dan mouse up
 function onMouseDown(event) {
-if (!isDescendant(musicBox, event.target)) {
-    isMouseDown = true;
-    stopTween();
+    if (!isDescendant(musicBox, event.target)) {
+        isMouseDown = true;
+        stopTween();
     }
 }
 
 function onMouseUp(event) {
-if (!isDescendant(musicBox, event.target)) {
-    isMouseDown = false;
-    startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1));
-}
+    if (!isDescendant(musicBox, event.target)) {
+        isMouseDown = false;
+        startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1));
+    }
 }
 
 //Event listener untuk mouse move, mouse down, dan mouse up
@@ -151,16 +150,17 @@ document.addEventListener("mousedown", onMouseDown, false);
 document.addEventListener("mouseup", onMouseUp, false);
 
 //Event listener untuk touch start dan touch end
-document.addEventListener("touchstart",function (event) {
-    onMouseDown(event.touches[0]);
-},false
-);
+document.addEventListener("touchstart", function(event) {
+    if (event.touches.length > 0) {
+        onMouseDown(event.touches[0]);
+    }
+}, false);
 
-document.addEventListener("touchend",function (event) {
-    onMouseUp(event.touches.length === 0 ? { clientX: 0, clientY: 0 } : event.touches[0]);
-},
-false
-);
+document.addEventListener("touchend", function(event) {
+    if (event.changedTouches.length > 0) {
+        onMouseUp(event.changedTouches[0]);
+    }
+}, false);
 
 //Event listener untuk menghentikan animasi saat zoom dimulai
 controls.addEventListener("start", function () {
