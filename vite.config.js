@@ -1,12 +1,13 @@
+import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 
-export default ({
+export default defineConfig({
   plugins: [
     viteStaticCopy({
       targets: [
         {
-            src: 'asset3D/*',
+            src: 'assets3D/*',
             dest: 'asset3D'
           },
           {
@@ -15,5 +16,6 @@ export default ({
           }
       ]
     })
-  ]
+  ],
+  base : '/Nostalgia-SeabedLamp3D/'
 });
