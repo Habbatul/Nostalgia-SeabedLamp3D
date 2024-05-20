@@ -79,11 +79,11 @@ var rotate1;
 var isMouseDown = false;
 var isZooming = false;
 
-function initialAnimation(distanceFromPivot) {
+function initialAnimation(distanceFromPivot, currentAngle) {
     tween = new TWEEN.Tween(camera.position)
-        .to({ x: pivot1.x + distanceFromPivot * Math.cos(InitialAngle1), y: initialPosition1.y, z: pivot1.z + distanceFromPivot * Math.sin(InitialAngle1) }, 500)
+        .to({ x: pivot1.x + distanceFromPivot * Math.cos(currentAngle), y: initialPosition1.y, z: pivot1.z + distanceFromPivot * Math.sin(currentAngle) }, 500)
         .onComplete(() => {
-            rotate1 = new TWEEN.Tween({ angle: 0 })
+            rotate1 = new TWEEN.Tween({ angle: currentAngle })
                 .to({ angle: Math.PI * 2 }, 4000)
                 .onUpdate((obj) => {
                     var angle = obj.angle;
@@ -98,7 +98,7 @@ function initialAnimation(distanceFromPivot) {
         .start();
 }
 
-initialAnimation(distance1);
+initialAnimation(distance1, InitialAngle1);
 
 
 const musicBox = document.getElementById('music-box');
@@ -115,11 +115,15 @@ function isDescendant(parent, child) {
     return false;
 }
 
+//mendapatkan angle saat ini
+function getCurrentAngle(objectPosition, pivotPosition) {
+    return Math.atan2(objectPosition.z - pivotPosition.z, objectPosition.x - pivotPosition.x);
+}
 
 //Memulai Tween jika tidak sedang menahan tombol mouse
-function startTween(distance) {
+function startTween(distance, currentAngle) {
     if (!isMouseDown && !isZooming) {
-        initialAnimation(distance);
+        initialAnimation(distance, currentAngle);
     }
 }
 
@@ -141,7 +145,7 @@ function onMouseDown(event) {
 function onMouseUp(event) {
     if (!isDescendant(musicBox, event.target)) {
         isMouseDown = false;
-        startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1));
+        startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1), getCurrentAngle(new THREE.Vector3().copy(camera.position),pivot1));
     }
 }
 
@@ -176,7 +180,7 @@ controls.addEventListener("start", function () {
 //Event listener untuk memulai kembali animasi setelah zoom selesai
 controls.addEventListener("end", function () {
     isZooming = false;
-    startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1));
+    startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1), getCurrentAngle(new THREE.Vector3().copy(camera.position),pivot1));
 });
 
 
