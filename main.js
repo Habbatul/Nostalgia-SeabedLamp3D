@@ -150,24 +150,26 @@ document.addEventListener("mouseup", onMouseUp, false);
 
 //Event listener untuk touch start dan touch end
 document.addEventListener("touchstart", function(event) {
+    isZooming = true;
     if (event.touches.length > 0) {
         onMouseDown(event.touches[0]);
     }
 }, false);
 
 document.addEventListener("touchend", function(event) {
+    isZooming = false;
     if (event.changedTouches.length > 0) {
         onMouseUp(event.changedTouches[0]);
     }
 }, false);
 
-//Event listener untuk menghentikan animasi saat zoom dimulai
+// Event listener untuk menghentikan animasi saat zoom dimulai
 controls.addEventListener("start", function () {
     isZooming = true;
     stopTween();
 });
 
-//Event listener untuk memulai kembali animasi setelah zoom selesai
+// Event listener untuk memulai kembali animasi setelah zoom selesai
 controls.addEventListener("end", function () {
     isZooming = false;
     startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1));
