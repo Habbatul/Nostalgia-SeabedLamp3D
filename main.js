@@ -155,12 +155,20 @@ document.addEventListener("touchstart", function(event) {
     if (event.touches.length > 0) {
         onMouseDown(event.touches[0]);
     }
+    if (event.touches.length === 2) {
+        isZooming = true;
+        stopTween();
+    }
 }, false);
 
 document.addEventListener("touchend", function(event) {
     isZooming = false;
     if (event.changedTouches.length > 0) {
         onMouseUp(event.changedTouches[0]);
+    }
+    if (event.touches.length === 2) {
+        isZooming = false;
+        startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1));
     }
 }, false);
 
@@ -175,6 +183,10 @@ controls.addEventListener("end", function () {
     isZooming = false;
     startTween(new THREE.Vector3().copy(camera.position).distanceTo(pivot1));
 });
+
+
+
+
 
 //CRT Shader
 const crtTVShader = {
