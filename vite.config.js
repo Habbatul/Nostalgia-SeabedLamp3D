@@ -3,7 +3,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 
 export default defineConfig({
-  assetsInclude: ['**/*.gltf'],
+  assetsInclude: ['**/*.glb'],
   plugins: [
     viteStaticCopy({
       targets: [

@@ -48,7 +48,7 @@ controls.maxDistance = 120;
 
 //GLTF Loader
 var loader = new GLTFLoader();
-    loader.load('asset3D/Seabedlamp.gltf', function(gltf){
+    loader.load('./asset3D/SeabedLamp.glb', function(gltf){
         const model = gltf.scene;
         model.position.set(0,0,0);
         model.scale.set(30,30,30);
