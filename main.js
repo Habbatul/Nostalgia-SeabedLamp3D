@@ -84,7 +84,7 @@ function initialAnimation(distanceFromPivot, currentAngle) {
         .to({ x: pivot1.x + distanceFromPivot * Math.cos(currentAngle), y: initialPosition1.y, z: pivot1.z + distanceFromPivot * Math.sin(currentAngle) }, 500)
         .onComplete(() => {
             rotate1 = new TWEEN.Tween({ angle: currentAngle })
-                .to({ angle: Math.PI * 2 }, 4000)
+                .to({ angle: currentAngle + Math.PI * 2 }, 4000)
                 .onUpdate((obj) => {
                     var angle = obj.angle;
                     var newX = pivot1.x + distanceFromPivot * Math.cos(angle);
