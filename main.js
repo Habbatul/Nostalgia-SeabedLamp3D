@@ -13,7 +13,6 @@ const canvas = document.getElementById('canvas');
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(80, window.innerWidth/window.innerHeight, 0.1, 1000);
 var renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true});
-renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 
