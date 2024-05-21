@@ -40,6 +40,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.25;
 controls.enableZoom = true;
+controls.enablePan = false;
 
 controls.target.set(0,8,0);
 controls.minDistance = 20; 
